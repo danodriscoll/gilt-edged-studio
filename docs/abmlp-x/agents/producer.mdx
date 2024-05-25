@@ -1,0 +1,176 @@
+---
+sidebar_position: 3
+---
+
+# Producer
+
+## Properties
+
+<details>
+  <summary>Producer(Agent Properties)</summary>
+  <div>
+    <div>
+        ```python showLineNumbers title="agents.py"
+        class Producer(mesa.Agent):
+            """A Producer agent."""
+
+            def __init__(self, unique_id, model):
+                super().__init__(unique_id, model)
+                
+                self.breed = "Producer"
+                self.period = 0 # Model run step.
+
+                # (Gs) (source account)
+                self.government_supplied_expenditure = Decimal(0) 
+                # (Cs) (source account)
+                self.consumption_goods_supplied = Decimal(0)
+                # Memo account: (Contribution to National Income (Y)) : (Y = Gs + Cs)
+                self.income_memo_account = Decimal(0)
+                # (W_Nd) (use account)
+                self.wage_rate_demanded = Decimal(0)
+
+                # Energy use
+                self.flow_energy_used = Decimal(0)
+                self.stock_energy_used = Decimal(0)
+        ```
+    </div>
+  </div>
+</details>
+
+## Behaviour Comments
+
+<details>
+  <summary>Producer(Agent Comments)</summary>
+  <div>
+    <div>
+        ```python showLineNumbers title="agents.py"
+        def step(self):
+            """
+            Producer Functions (each and every step):
+            1 Choose and employ a household agent.
+            2 Connect with the Environment and account for government and household consumption demands.
+            3 Communicate to employed household agents their wage this step.
+            """
+        ```
+    </div>
+  </div>
+</details>
+
+## Behaviour Functions
+
+### Household Employment
+
+Every Producer will seek to employ one unemployed Household.
+
+```python showLineNumbers title="agents.py"
+# 1
+def employ_household_process(self):
+    """ Look to employ an unemployed household """
+    unemployed_households = list(
+        filter( # Filter for the unemployed.
+            lambda obj: obj.is_employed == False,
+            self.model.get_agents_of_type(Household) # Households AgentSet.
+        )
+    )
+
+    if len(unemployed_households) > 0: # Employ one agent at a time, for the moment.
+        new_employee = self.random.choice(unemployed_households)
+        return new_employee
+    else:
+        sys.exit("No unemployed households to employ! Exiting.")
+```
+
+#### Household Employment by Type (A Draft)
+
+How employment might apply to Household agents by class *type*.
+
+Household agents have attributes which, among others, include *equity* and *type*. In every step, a Household agent will record its accumulated equity (wealth). Households belong to one of three *type* divisions; alpha, beta and gamma. To which division a Household belongs (at every step) will depend on its wealth that is some percentage greater or less than the `average wealth` of all Household agents in the current step.
+
+Producer agents receive an equal share of Government expenditure at the beginning of every step. Household agents are available for employment. Each Producer will choose to employ (by random choice) an unemployed alpha Household agent seventy-five percent of the time. Failing to find an unemployed alpha, a beta Household is sought. If all beta Households are employed, gamma Households are sought by producers still looking to employ.
+
+## Energy Requirement
+
+```python showLineNumbers title="agents.py"
+# 2
+def energy_requirement(self):
+    """
+    One monetary unit of demands will require one unit of energy to fulfil.
+    """
+
+    # Energy required based on combined (monetary) government agent and consumer agents desires.
+    total_energy_required = (_government_supplied_expenditure
+                             + _household_supplied_expenditure)
+
+    energy_shortfall = 0
+
+    # To calculate flows of 'flow' (renewable) energy.
+    opening_flow_energy = environment.units_flow_energy
+    # To calculate flows of 'stock' (fossil hydrocarbon) energy.
+    opening_stock_energy = (environment.units_stock_energy
+                            * environment.availability_stock_energy)
+
+    # Use stock (fossil hydrocarbon) energy to fill the first 5% of total energy required.
+
+    # Environment has remaining stock (fossil hydrocarbon) energy.
+    if environment.units_stock_energy > 0:
+        # Fill the portion of total energy required (for maintenance) from stock energy.
+        environment.units_stock_energy -= (total_energy_required * Decimal(0.05))
+        total_energy_required = total_energy_required * Decimal(0.95)
+    else:
+        sys.exit("Model exit. No available stock energy for system maintenance.")
+
+    # Use all available flow (renewable) energy and make up any shortfall with
+    # stock (fossil hydrocarbon) energy.
+
+    # No shortfall in flow energy
+    if environment.units_flow_energy > 0 and (total_energy_required
+                                              <= environment.units_flow_energy):
+        environment.units_flow_energy -= total_energy_required
+    
+    # There is a shortfall of up to 100% of 'total_energy_required'.
+    elif environment.units_flow_energy > 0 and (total_energy_required
+                                                > environment.units_flow_energy):
+        energy_shortfall = total_energy_required - environment.units_flow_energy
+        _flow_energy_remaining = environment.units_flow_energy
+        environment.units_flow_energy -= _flow_energy_remaining # (will be 0).
+
+    # Environment has remaining stock (fossil hydrocarbon) energy.
+    if environment.units_stock_energy > 0 and (energy_shortfall 
+                                               <= environment.units_stock_energy):
+        # Shortfall might be 0 if total energy requirement has been met by flow energy.
+        environment.units_stock_energy -= energy_shortfall
+    else:
+        sys.exit("Model exit. No available stock energy to fill system shortfall.")
+
+    # Closing energy flows.
+    # To calculate flows of 'flow' (renewable) energy.
+    closing_flow_energy = environment.units_flow_energy
+    # To calculate flows of 'stock' (fossil hydrocarbon) energy.
+    closing_stock_energy = environment.units_stock_energy 
+
+    # Flow of energy used by the Producer agent this step.
+    self.flow_energy_used = opening_flow_energy - closing_flow_energy
+    self.stock_energy_used = opening_stock_energy - closing_stock_energy
+
+    # Negative externality returned to environment.
+    environment.cumulative_neg_externality += (self.stock_energy_used
+                                               * environment.cumulative_neg_externality_rate)
+```
+
+### Steady State System
+
+One monetary unit of demands from either Government or Housholds will require one unit of energy to fulfil. This is a test model run (170 steps) showing simplistic Producer energy use dynamics.
+
+#### Model Run Parameters
+
+- Run Name: ABMLP-X Test
+- Government Expenditure: 20 units per step
+- Taxation rate: 20% (Flat rate; all household agents)
+- Coupon Rate: 0%
+- Interest Rate: 0%
+
+:::tip Energy Test Chart
+
+View the [amblp-x energy](https://www.data-reports.net/gilt-edged-studio/abmlp-x-energy-test.html) requirement chart.
+
+:::

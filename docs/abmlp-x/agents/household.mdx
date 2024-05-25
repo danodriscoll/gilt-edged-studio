@@ -1,0 +1,342 @@
+---
+sidebar_position: 4
+---
+
+# Household
+
+## Properties
+
+<details>
+  <summary>Household(Agent Properties)</summary>
+  <div>
+    <div>
+        ```python showLineNumbers title="agents.py"
+        class Household(mesa.Agent):
+            """A Household agent."""
+
+            def __init__(self, num_household, unique_id, model):
+                super().__init__(unique_id, model)
+                
+                self.breed = "Household"
+                self.period = 0 # Model run step.
+
+                # (W_Ns) Wage supplied.
+                self.wage_rate_supplied = Decimal(0)
+                # (Cd) Consumption demands.
+                self.consumption_goods_demanded = Decimal(0)
+                # (Ts) Taxes supplied.
+                self.taxation_revenue_supplied = Decimal(0)
+
+                # (Vh) Wealth, in nominal terms.
+                self.wealth = Decimal(0)
+                # (Hd) A non-interest bearing money account, aka, high-powered money.
+                self.cash_money = Decimal(0)
+                self.disposable_income = Decimal(0) # (YD) Disposable Income.
+
+                """ Interest-bearing bills and long-term bonds. """
+                # (Bhd) Interest-bearing bills demanded by households.
+                self.bills_demanded = Decimal(0)
+                # (INTh) Total interest received on interest-bearing bills held.
+                self.interest_from_bills = Decimal(0)
+                # (BLd) Consols (Long-term bonds) demanded by households.
+                self.bonds_demanded = Decimal(0)
+                # (INT_BLd) The bond coupon interest revenue.
+                self.interest_from_bonds = Decimal(0)
+                # (CG) Capital gains / losses on long-term bonds.
+                self.capital_gains = Decimal(0)
+                # (RrbL) The overall rate of return on a long-term bond
+                # (Interest revenue plus capital gain / loss).
+                self.overall_rate_of_return_bonds = Decimal(0)                
+
+                """ Agent expectations regarding long-term bonds. """
+                # (χ) Weight of conviction in expected bond prices (Chi).
+                # Default is 1; total conviction in expectations.
+                self.chi = 1
+                # (PebL) The expected price of a bond in the next step.
+                self.expected_bond_price = Decimal(0)
+                # (expected_coupon_rate) A percentage.
+                self.expected_coupon_rate = Decimal(0)
+                # (ERrbL) The expected rate of return (bond yield).
+                self.expected_bond_yield = Decimal(0)
+                # (CGe) Expected capital gains.
+                self.expected_capital_gains = Decimal(0)
+
+                # Default employment status.
+                self.is_employed = False
+
+                # Number of households in the system.
+                self.num_households = Decimal(num_household)
+        ```
+    </div>
+  </div>
+</details>
+
+## Behaviour Comments
+
+<details>
+  <summary>Household(Agent Comments)</summary>
+  <div>
+    <div>
+        ```python showLineNumbers title="agents.py"
+        def step(self):
+            """
+            Household Functions (each and every step):
+            1 Calculate disposable income, the wage, interest and coupon payments received minus tax.
+            2 Consumption Decision: Decide how much to save out of income.
+            3 Calculate new wealth including capital gains or losses this step.
+            4 Agent Bond Price Expectations: Freeze expectations.
+            5 Rebalance asset portfolio:
+                Liquidity preference. Two traditions:
+                Quantity theory of money: Link money balances to the flow of income.
+                Make money balances some proportion of wealth.
+            """
+        ```
+    </div>
+  </div>
+</details>
+
+## The Portfolio Decision
+
+The interest rate offered will affect the composition of a household agent's asset portfolio. Model households now have a third financial asset in which to invest. Household agents will choose, based on their expectations and liquidity preferences, to allocate wealth between money, bills and long-term government bonds.
+
+### Interest Assets
+
+```python showLineNumbers title="interest-assets.py"
+# Utility: Catch divide by zero error.
+def zero_division(n, d):
+    return n / d if d else 0
+
+def interestAssets(self, central_bank):
+    """
+    The proportion of wealth a household agent will allocate to
+    interest-bearing money assets. Reference doc:
+    'Do the Rich Save More?' Short answer: Yes, they do.
+    
+    Dynan, Karen E.; Skinner, Jonathan; and Zeldes, Stephen P.,
+    "Do the Rich Save More?" (2000).
+    Open Dartmouth: Faculty Open Access Articles. 1769.
+    https://digitalcommons.dartmouth.edu/facoa/1769
+    """
+    change_in_base_rate = (zero_division(central_bank.base_rate
+                                        - central_bank.base_rate_last_step,
+                                        central_bank.base_rate_last_step)
+                                        * 100)
+
+    wealth_diff_ratio = (zero_division(self.wealth
+                                    - Household.average_wealth, Household.average_wealth))
+
+    if self.is_employed:
+        if wealth_diff_ratio >= 1:
+            prop_assets_this = ((self.wealth * Decimal('0.40'))
+                                * (1 + zero_division(change_in_base_rate, 100)))
+        elif wealth_diff_ratio >= 0.5 and wealth_diff_ratio < 1:
+            prop_assets_this = ((self.wealth * Decimal('0.30'))
+                                * (1 + zero_division(change_in_base_rate, 100)))
+        elif wealth_diff_ratio >= 0 and wealth_diff_ratio < 0.5:
+            prop_assets_this = ((self.wealth * Decimal('0.20'))
+                                * (1 + zero_division(change_in_base_rate, 100)))
+        else:
+            prop_assets_this = ((self.wealth * Decimal('0.01'))
+                                * (1 + zero_division(change_in_base_rate, 100)))
+    else: # Agent is unemployed in this step.
+        if wealth_diff_ratio >= 1:
+            prop_assets_this = ((self.wealth * Decimal('0.25'))
+                                * (1 + zero_division(change_in_base_rate, 100)))
+        elif wealth_diff_ratio >= 0.5 and wealth_diff_ratio < 1:
+            prop_assets_this = ((self.wealth * Decimal('0.10'))
+                                * (1 + zero_division(change_in_base_rate, 100)))
+        elif wealth_diff_ratio >= 0 and wealth_diff_ratio < 0.5:
+            prop_assets_this = ((self.wealth * Decimal('0.05'))
+                                * (1 + zero_division(change_in_base_rate, 100)))
+        else:
+            prop_assets_this = ((self.wealth * Decimal('0.01'))
+                                * (1 + zero_division(change_in_base_rate, 100)))
+
+    return prop_assets_this
+```
+
+### Long-Term Bonds
+
+Mirroring Godley & Lavoie (G&L) pp 133 — 135.
+
+When household agents make their long-term bond decisions, three features matter. First households are concerned with the price that the long-term bond fetches in the current period, for this defines the yield of the asset which will arise in the next period (model step). Second, what also matters is the expected price of the bond in the next period, when it will be possible to sell the bond. These two prices help define what we shall call the pure expected rate of return on bonds. The third factor is the confidence with which households hold their expectations about future bond prices. In a model where there may be a multiplicity of household agent opinions, it is a measure of the weight that households investors attribute to the validity of their expectations.
+
+```python showLineNumbers title="bond-price-expectations.py"
+# Utility: Catch divide by zero error.
+def zero_division(n, d):
+    return n / d if d else 0
+
+""" G&L p142:
+Portfolio Decision: Bills vs bonds vs central bank (money) deposits.
+"... We have further assumed that it is the expected rate of returns on bonds, ERrbl,
+rather than the yield on bonds, rbL, that enters into the determination of portfolio choice.
+We note that indeed portfolio decisions of households are forward-looking."
+"""
+# *** Bond Price Expectations Logic ***
+self.expected_coupon_rate = government.coupon_rate # Freeze bond price expectations.
+
+"""
+Agent Bond Price Expectations:
+G&L p148: ERrbL = rbL + χ * ((PebL - PbL) / PbL)
+
+'self.expected_bond_price = government.bond_price': Freeze expectations:
+A household would expect the current bond price to remain the same in the next period.
+"""
+
+# Use the int rate from the previoius step and the expected coupon rate
+# to calculate the expected price of a long-term bond.
+self.expected_bond_price = zero_division(self.expected_coupon_rate, central_bank.base_rate)
+
+self.expected_bond_yield = (government.bond_yield
+                            + (self.chi * zero_division(self.expected_bond_price
+                                                        - government.bond_price,
+                                                        government.bond_price)))
+
+# Expected capital gains or losses.
+self.expected_capital_gains = (self.chi
+                                * ((self.expected_bond_price - government.bond_price)
+                                * self.bonds_demanded))
+```
+
+### Proportion Bonds
+
+View the long-term [bond framework](https://docs.google.com/spreadsheets/d/1_3DX1j2vghMV8354_DmjBqt3wyg2AwMdvVSd2qtlaC4/edit#gid=1976813024).
+
+```python showLineNumbers title="proportion-bonds.py"
+# Utility: Catch divide by zero error.
+def zero_division(n, d):
+    return n / d if d else 0
+
+def propBonds(self, interest_assets, government):
+    """ Balance the portfolio of interest assets between bills and bonds. """
+    prop_assets = interest_assets
+
+    change_in_bond_yield = (zero_division(self.expected_bond_yield
+                                          - government.bond_yield, government.bond_yield)
+                                          * 100)
+
+    wealth_diff_ratio = (zero_division(self.wealth
+                                       - Household.average_wealth, Household.average_wealth))
+
+    if self.is_employed:
+        if wealth_diff_ratio >= 1:
+            prop_bonds_this = ((prop_assets * Decimal('0.40'))
+                                * (1 + zero_division(change_in_bond_yield, 100)))
+        elif wealth_diff_ratio >= 0.5 and wealth_diff_ratio < 1:
+            prop_bonds_this = ((prop_assets * Decimal('0.30'))
+                                * (1 + zero_division(change_in_bond_yield, 100)))
+        elif wealth_diff_ratio >= 0 and wealth_diff_ratio < 0.5:
+            prop_bonds_this = ((prop_assets * Decimal('0.20'))
+                                * (1 + zero_division(change_in_bond_yield, 100)))
+        else:
+            prop_bonds_this = ((prop_assets * Decimal('0.10'))
+                                * (1 + zero_division(change_in_bond_yield, 100)))
+    else: # Agent is unemployed in this step.
+        if wealth_diff_ratio >= 1:
+            prop_bonds_this = ((prop_assets * Decimal('0.30'))
+                                * (1 + zero_division(change_in_bond_yield, 100)))
+        elif wealth_diff_ratio >= 0.5 and wealth_diff_ratio < 1:
+            prop_bonds_this = ((prop_assets * Decimal('0.20'))
+                                * (1 + zero_division(change_in_bond_yield, 100)))
+        elif wealth_diff_ratio >= 0 and wealth_diff_ratio < 0.5:
+            prop_bonds_this = ((prop_assets * Decimal('0.10'))
+                                * (1 + zero_division(change_in_bond_yield, 100)))
+        else:
+            prop_bonds_this = ((prop_assets * Decimal('0.05'))
+                                * (1 + zero_division(change_in_bond_yield, 100)))
+
+    return prop_bonds_this
+```
+
+## Taxation Arrangements
+
+The model has three (two developed, one draft) Government taxation arrangements for the return of Household agent wage and interest income. The flat and marginal rate arrangements return the income of Households in accordance with either a single fixed, or array of percentages. The third arrangement, a draft, returns a percentage of income by Household agent class *type*.
+
+### Flat Rate Taxation
+
+```python showLineNumbers title="flat-rate.py"
+# Utility: Catch divide by zero error.
+def zero_division(n, d):
+    return n / d if d else 0
+
+def flatTaxToPay(self, amount, rate):
+    """ Flat rate tax to pay (wage and interest income). """
+    tax_to_pay = Decimal(0)
+    tax_to_pay = amount * zero_division(rate, 100)
+
+    return tax_to_pay
+```
+
+### Marginal Rate Taxation
+
+```python showLineNumbers title="marginal-rate.py"
+def marginalTaxToPay(self):
+    """ Marginal rate tax to pay (wage only).
+
+    Tax Bracket 0:
+    No tax on any wage upto the first 50% of the historic average wage amount.
+
+    Tax Bracket 1:
+    Pay 60% tax on any remaining wage amount that is between 50% and 100%
+    of the historic average wage amount.
+
+    Tax Bracket 2:
+    Pay 70% tax on any remaining wage amount that exceeds 100% of the
+    historic average wage amount.    
+    """
+    marginal_tax_to_pay = Decimal(0)
+
+    bracket_one_amount = Decimal(0)
+    bracket_two_amount = Decimal(0)
+
+    if self._wage_rate_supplied <= Household.average_wage:
+        bracket_one_amount = self._wage_rate_supplied - (Household.average_wage * Decimal(0.5))
+    else:
+        bracket_one_amount = Household.average_wage * Decimal(0.5)
+        bracket_two_amount = self._wage_rate_supplied - Household.average_wage
+
+    if self._wage_rate_supplied > 0:
+        marginal_tax_to_pay = ((bracket_one_amount * Decimal(0.6))
+                                + (bracket_two_amount * Decimal(0.7)))
+
+    return marginal_tax_to_pay
+```
+
+#### Taxation Arrangement Comparison
+
+Using an example model test run to compare the tax to be returned under either the flat rate or marginal rate arrangement. The average wage for all Households at model step 6 was: **3625.31**
+
+*Three example Households:*
+| Household Unique ID | Wage Supplied | Flat Rate (37%) Tax Return | Marginal Rate Tax Return |
+| :-------------- | :------------ | :------------------------- | :----------------------- |
+| 5               | 4023.58       | 1488.72                    | 1366.38                  |
+| 10              | 2438.05       | 902.08                     | 375.24                   |
+| 8               | 6203.24       | 2295.20                    | 2892.14                  |
+
+#### Household Agent ID 8: Marginal Rate Tax Return Breakdown
+
+50% of historical average wage amount at step 6: (**3625.31** / 2) = **1812.65**
+
+1. No tax on wage amount up to the first 50% of the historical average wage amount.
+2. Tax on wage amount that is between 50% and 100% of the historical average wage amount (**1812.65** * 60%) = **1087.59**
+3. Tax on wage amount that exceeds 100% of the historical average wage amount ((**6203.24** - **3625.31**) * 70%) = **1804.55**
+
+### Taxation by Household Type
+
+This draft describes how taxation might apply to Household agents by class *type*.
+
+#### Taxation Liability by Type
+
+Government taxation rates (in every step) by Household agent type: **alpha**, 25%; **beta**, 35%; **gamma**, 45%.
+
+#### Wealth and the Perception of Taxation
+
+Household agents think about their *wealth*. To assist thinking, Households discuss their *wealth* with other Households. Though it may only communicate with another of the same type, a Household has no preference for which other agent it will contact. Agents communicate on a random choice basis. A feature of Household *wealth* discussions: When contacted, there is a ten percent chance the Household spoken to will inform that its wealth is between 1% and 5% greater than the actuality. A five percent chance it will say it is between 1% and 5% less wealthy. Households will accurately state their *wealth*, on average, eighty-five percent of the time.
+
+##### Household wealth by type showing mutually exclusive possibilities a Household will advocate for a lower rate of taxation
+
+| Wealth in Current Step            | Alpha Household    | Beta Household    | Gamma Household   |
+| :-------------------------------- | :----------------- | :---------------- | :---------------- |
+| Is > Previous Step Wealth         | 80 to 85% of time  | 70 to 75% of time | 60 to 65% of time |
+| Is >= Other Household Wealth      | 86 to 95% of time  | 76 to 85% of time | 66 to 75% of time |
+| Is < Other Household Wealth by 5% | 96 to 100% of time | 86 to 95% of time | 76 to 85% of time |
