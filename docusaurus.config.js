@@ -9,7 +9,7 @@ import {themes as prismThemes} from 'prism-react-renderer';
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'GiltEdged Studio',
-  tagline: 'An agent-based model development and study of household asset portfolio strategies within a government money system. Context: United Kingdom of Great Britain and Northern Ireland (UK).',
+  tagline: 'An agent-based (computational) development and study of asset portfolio strategies within a government money system. Model context: The United Kingdom of Great Britain and Northern Ireland (UK).',
   favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
