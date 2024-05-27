@@ -9,7 +9,16 @@ const FeatureList = [
     Svg: require('@site/static/img/model_development.svg').default,
     description: (
       <>
-        An open-ended agent-based monetary model development.<br/>A <Link to="/docs/introduction">model</Link> introduction.
+        An open-ended agent-based monetary model development. Read the <Link to="/docs/introduction">introduction</Link>.
+      </>
+    ),
+  },
+  {
+    title: 'Monetary Policy Logic',
+    Svg: require('@site/static/img/creative_decision.svg').default,
+    description: (
+      <>
+        Extraneous inflation and the real monetary policy logic defined.
       </>
     ),
   },
@@ -18,7 +27,7 @@ const FeatureList = [
     Svg: require('@site/static/img/model_analysis.svg').default,
     description: (
       <>
-        Analysis of both model and real-world economic time-series.<br/>See the <Link to="/blog">blog</Link>.
+        A time-series analysis of the journey to 2030 and beyond. Peruse the <Link to="/blog">blog</Link>.
       </>
     ),
   },
@@ -26,11 +35,11 @@ const FeatureList = [
 
 function Feature({Svg, title, description}) {
   return (
-    <div className={clsx('col col--6')}>
+    <div className={clsx('col col--4')}>
       <div className="text--center">
         <Svg className={styles.featureSvg} role="img" />
       </div>
-      <div className="text--center padding-horiz--md">
+      <div className="text--left padding-horiz--md">
         <Heading as="h3">{title}</Heading>
         <p>{description}</p>
       </div>
