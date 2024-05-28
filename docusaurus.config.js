@@ -49,7 +49,7 @@ const config = {
           customCss: './src/css/custom.css',
         },
         gtag: {
-          trackingID: 'G-QJPXVD4XSV',
+          trackingID: 'G-D7PXB7SQCH',
           anonymizeIP: true,
         },
       }),
