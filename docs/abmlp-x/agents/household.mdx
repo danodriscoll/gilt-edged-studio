@@ -252,6 +252,22 @@ def prop_bonds(self, interest_assets, government):
 
 The model has three (two developed, one draft) Government taxation arrangements for the return of Household agent wage and interest income. The flat and marginal rate arrangements return the income of Households in accordance with either a single fixed, or array of percentages. The third arrangement, a draft, returns a percentage of income by Household agent class *type*.
 
+### Taxation Strategy
+
+```python showLineNumbers title="tax-strat.py"
+def tax_strategy(self, amount):
+    """ Final tax amount paid (wage income).
+    Receives amount calculated by either,
+    'flat_tax_to_pay()', or marginal_tax_to_pay().
+
+    To be developed..
+    """
+    final_tax_paid = Decimal(0)
+    final_tax_paid = amount * Decimal(1) # Pay all tax owed.
+
+    return final_tax_paid
+```
+
 ### Flat Rate Taxation
 
 ```python showLineNumbers title="flat-rate.py"
