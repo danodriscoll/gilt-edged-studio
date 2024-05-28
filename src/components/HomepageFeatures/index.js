@@ -14,11 +14,11 @@ const FeatureList = [
     ),
   },
   {
-    title: 'Monetary Policy Logic',
+    title: 'Monetary Policy',
     Svg: require('@site/static/img/creative_decision.svg').default,
     description: (
       <>
-        Extraneous inflation and the real monetary policy logic defined.
+        The real monetary policy logic defined.
       </>
     ),
   },
@@ -27,7 +27,7 @@ const FeatureList = [
     Svg: require('@site/static/img/model_analysis.svg').default,
     description: (
       <>
-        A time-series analysis of the journey to 2030 and beyond. Peruse the <Link to="/blog">blog</Link>.
+        A journey to 2030 and beyond. Model output time-series analysis. Peruse the <Link to="/blog">blog</Link>.
       </>
     ),
   },

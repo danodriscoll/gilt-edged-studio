@@ -141,7 +141,7 @@ sidebar_position: 2
           of govt bonds. A household will simply adjust for its portfolio composition change in
           'household.bonds_demanded', at the same time 'government.bonds_issued' is adjusted
           (in the opposite direction) to reflect the total amount of bonds the government now
-          has outstanding to the household sector.Bond coupon payments to households
+          has outstanding to the household sector. Bond coupon payments to households
           adjust in the next step.
           
           Therefore, the final part of G&L equation 5.14, that is, '- ΔBLs₋₁ * PbL'
@@ -172,7 +172,7 @@ self.bond_price = zero_division(self.coupon_rate, central_bank.base_rate)
 self.bond_yield = zero_division(self.coupon_rate, self.bond_price)
 ```
 
-### Issue New Bills
+### Issue New or Redeem Bills
 
 ```python showLineNumbers title="agents.py"
 # 6

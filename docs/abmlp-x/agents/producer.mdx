@@ -109,8 +109,9 @@ def energy_requirement(self):
     opening_stock_energy = (environment.units_stock_energy
                             * environment.availability_stock_energy)
 
-    # Use stock (fossil hydrocarbon) energy to fill the first 5% of total energy required.
-
+    """
+    Use stock (fossil hydrocarbon) energy to fill the first 5% of total energy required.
+    """
     # Environment has remaining stock (fossil hydrocarbon) energy.
     if environment.units_stock_energy > 0:
         # Fill the portion of total energy required (for maintenance) from stock energy.
@@ -119,9 +120,10 @@ def energy_requirement(self):
     else:
         sys.exit("Model exit. No available stock energy for system maintenance.")
 
-    # Use all available flow (renewable) energy and make up any shortfall with
-    # stock (fossil hydrocarbon) energy.
-
+    """
+    Use all available flow (renewable) energy and make up any shortfall with
+    stock (fossil hydrocarbon) energy.    
+    """
     # No shortfall in flow energy
     if environment.units_flow_energy > 0 and (total_energy_required
                                               <= environment.units_flow_energy):

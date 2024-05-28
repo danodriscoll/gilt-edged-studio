@@ -106,7 +106,7 @@ The interest rate offered will affect the composition of a household agent's ass
 def zero_division(n, d):
     return n / d if d else 0
 
-def interestAssets(self, central_bank):
+def interest_assets(self, central_bank):
     """
     The proportion of wealth a household agent will allocate to
     interest-bearing money assets. Reference doc:
@@ -207,7 +207,7 @@ View the long-term [bond framework](https://docs.google.com/spreadsheets/d/1_3DX
 def zero_division(n, d):
     return n / d if d else 0
 
-def propBonds(self, interest_assets, government):
+def prop_bonds(self, interest_assets, government):
     """ Balance the portfolio of interest assets between bills and bonds. """
     prop_assets = interest_assets
 
@@ -259,7 +259,7 @@ The model has three (two developed, one draft) Government taxation arrangements 
 def zero_division(n, d):
     return n / d if d else 0
 
-def flatTaxToPay(self, amount, rate):
+def flat_tax_to_pay(self, amount, rate):
     """ Flat rate tax to pay (wage and interest income). """
     tax_to_pay = Decimal(0)
     tax_to_pay = amount * zero_division(rate, 100)
@@ -270,7 +270,7 @@ def flatTaxToPay(self, amount, rate):
 ### Marginal Rate Taxation
 
 ```python showLineNumbers title="marginal-rate.py"
-def marginalTaxToPay(self):
+def marginal_tax_to_pay(self, amount):
     """ Marginal rate tax to pay (wage only).
 
     Tax Bracket 0:
@@ -289,13 +289,13 @@ def marginalTaxToPay(self):
     bracket_one_amount = Decimal(0)
     bracket_two_amount = Decimal(0)
 
-    if self._wage_rate_supplied <= Household.average_wage:
-        bracket_one_amount = self._wage_rate_supplied - (Household.average_wage * Decimal(0.5))
+    if amount <= Household.average_wage:
+        bracket_one_amount = amount - (Household.average_wage * Decimal(0.5))
     else:
         bracket_one_amount = Household.average_wage * Decimal(0.5)
-        bracket_two_amount = self._wage_rate_supplied - Household.average_wage
+        bracket_two_amount = amount - Household.average_wage
 
-    if self._wage_rate_supplied > 0:
+    if amount > 0:
         marginal_tax_to_pay = ((bracket_one_amount * Decimal(0.6))
                                 + (bracket_two_amount * Decimal(0.7)))
 
