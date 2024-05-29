@@ -14,11 +14,11 @@ const FeatureList = [
     ),
   },
   {
-    title: 'Strategy Evolution',
+    title: 'Evolution of Strategies',
     Svg: require('@site/static/img/creative_decision.svg').default,
     description: (
       <>
-        Household portfolio strategies and the real monetary policy logic defined.
+        Household strategies and monetary policy logic defined.
       </>
     ),
   },
@@ -27,7 +27,7 @@ const FeatureList = [
     Svg: require('@site/static/img/model_analysis.svg').default,
     description: (
       <>
-        A journey to 2030 and beyond. Model output time-series analysis. Peruse the <Link to="/blog">blog</Link>.
+        Journey to the future. Agent behaviours and macro output time-series analysis. Peruse the <Link to="/blog">blog</Link>.
       </>
     ),
   },

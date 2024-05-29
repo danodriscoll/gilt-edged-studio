@@ -4,6 +4,10 @@ sidebar_position: 4
 
 # Household
 
+## Taxation and Investment Strategies
+
+At every step a Household will decide on the amount of (wage) taxation it will pay, that is, a percentage of total tax owed on the wage received in the current step. Second, a Household will update its current wealth before deciding how much of that wealth to keep as cash money. The remaining wealth will then be invested in some proportion between the available portfolio of interest-bearing money assets.
+
 ## Properties
 
 <details>
@@ -94,6 +98,116 @@ sidebar_position: 4
     </div>
   </div>
 </details>
+
+## Taxation Arrangements
+
+The model has three (two developed, one draft) Government taxation arrangements for the return of Household agent wage and interest income. The flat and marginal rate arrangements return the income of Households in accordance with either a single fixed, or array of percentages. The third arrangement, a draft, returns a percentage of income by Household agent class *type*.
+
+### Flat Rate Taxation
+
+```python showLineNumbers title="flat-rate.py"
+# Utility: Catch divide by zero error.
+def zero_division(n, d):
+    return n / d if d else 0
+
+def flat_tax_to_pay(self, amount, rate):
+    """ Flat rate tax to pay (wage and interest income). """
+    tax_to_pay = Decimal(0)
+    tax_to_pay = amount * zero_division(rate, 100)
+
+    return tax_to_pay
+```
+
+### Marginal Rate Taxation
+
+```python showLineNumbers title="marginal-rate.py"
+def marginal_tax_to_pay(self, amount):
+    """ Marginal rate tax to pay (wage only).
+
+    Tax Bracket 0:
+    No tax on any wage upto the first 50% of the historic average wage amount.
+
+    Tax Bracket 1:
+    Pay 60% tax on any remaining wage amount that is between 50% and 100%
+    of the historic average wage amount.
+
+    Tax Bracket 2:
+    Pay 70% tax on any remaining wage amount that exceeds 100% of the
+    historic average wage amount.    
+    """
+    marginal_tax_to_pay = Decimal(0)
+
+    bracket_one_amount = Decimal(0)
+    bracket_two_amount = Decimal(0)
+
+    if amount <= Household.average_wage:
+        bracket_one_amount = amount - (Household.average_wage * Decimal(0.5))
+    else:
+        bracket_one_amount = Household.average_wage * Decimal(0.5)
+        bracket_two_amount = amount - Household.average_wage
+
+    if amount > 0:
+        marginal_tax_to_pay = ((bracket_one_amount * Decimal(0.6))
+                                + (bracket_two_amount * Decimal(0.7)))
+
+    return marginal_tax_to_pay
+```
+
+### Taxation Strategy
+
+```python showLineNumbers title="tax-strat.py"
+def tax_strategy(self, tax_to_pay):
+    """ Tax calculated from wage supplied, current step.
+
+    Receives a 'tax_to_pay' amount calculated by either,
+    flat_tax_to_pay() or marginal_tax_to_pay().
+
+    To develop..
+    """
+    tax_payment = Decimal(0)
+    tax_payment = tax_to_pay * Decimal(1) # Pay 100% of tax owed.
+
+    return tax_payment
+```
+
+#### Flat & Marginal Arrangement Comparison
+
+Using an example model test run to compare the tax to be returned under either the flat rate or marginal rate arrangement. The average wage for all Households at model step 6 was: **3625.31**
+
+*Three example Households:*
+| Household Unique ID | Wage Supplied | Flat Rate (37%) Tax Return | Marginal Rate Tax Return |
+| :-------------- | :------------ | :------------------------- | :----------------------- |
+| 5               | 4023.58       | 1488.72                    | 1366.38                  |
+| 10              | 2438.05       | 902.08                     | 375.24                   |
+| 8               | 6203.24       | 2295.20                    | 2892.14                  |
+
+#### Household Agent ID 8: Marginal Rate Tax Return Breakdown
+
+50% of historical average wage amount at step 6: (**3625.31** / 2) = **1812.65**
+
+1. No tax on wage amount up to the first 50% of the historical average wage amount.
+2. Tax on wage amount that is between 50% and 100% of the historical average wage amount (**1812.65** * 60%) = **1087.59**
+3. Tax on wage amount that exceeds 100% of the historical average wage amount ((**6203.24** - **3625.31**) * 70%) = **1804.55**
+
+### Taxation by Household Type
+
+This draft describes how taxation might apply to Household agents by class *type*.
+
+#### Taxation Liability by Type
+
+Government taxation rates (in every step) by Household agent type: **alpha**, 25%; **beta**, 35%; **gamma**, 45%.
+
+#### Wealth and the Perception of Taxation
+
+Household agents think about their *wealth*. To assist thinking, Households discuss their *wealth* with other Households. Though it may only communicate with another of the same type, a Household has no preference for which other agent it will contact. Agents communicate on a random choice basis. A feature of Household *wealth* discussions: When contacted, there is a ten percent chance the Household spoken to will inform that its wealth is between 1% and 5% greater than the actuality. A five percent chance it will say it is between 1% and 5% less wealthy. Households will accurately state their *wealth*, on average, eighty-five percent of the time.
+
+##### Household wealth by type showing mutually exclusive possibilities a Household will advocate for a lower rate of taxation
+
+| Wealth in Current Step            | Alpha Household    | Beta Household    | Gamma Household   |
+| :-------------------------------- | :----------------- | :---------------- | :---------------- |
+| Is > Previous Step Wealth         | 80 to 85% of time  | 70 to 75% of time | 60 to 65% of time |
+| Is >= Other Household Wealth      | 86 to 95% of time  | 76 to 85% of time | 66 to 75% of time |
+| Is < Other Household Wealth by 5% | 96 to 100% of time | 86 to 95% of time | 76 to 85% of time |
 
 ## The Portfolio Decision
 
@@ -247,112 +361,3 @@ def prop_bonds(self, interest_assets, government):
 
     return prop_bonds_this
 ```
-
-## Taxation Arrangements
-
-The model has three (two developed, one draft) Government taxation arrangements for the return of Household agent wage and interest income. The flat and marginal rate arrangements return the income of Households in accordance with either a single fixed, or array of percentages. The third arrangement, a draft, returns a percentage of income by Household agent class *type*.
-
-### Flat Rate Taxation
-
-```python showLineNumbers title="flat-rate.py"
-# Utility: Catch divide by zero error.
-def zero_division(n, d):
-    return n / d if d else 0
-
-def flat_tax_to_pay(self, amount, rate):
-    """ Flat rate tax to pay (wage and interest income). """
-    tax_to_pay = Decimal(0)
-    tax_to_pay = amount * zero_division(rate, 100)
-
-    return tax_to_pay
-```
-
-### Marginal Rate Taxation
-
-```python showLineNumbers title="marginal-rate.py"
-def marginal_tax_to_pay(self, amount):
-    """ Marginal rate tax to pay (wage only).
-
-    Tax Bracket 0:
-    No tax on any wage upto the first 50% of the historic average wage amount.
-
-    Tax Bracket 1:
-    Pay 60% tax on any remaining wage amount that is between 50% and 100%
-    of the historic average wage amount.
-
-    Tax Bracket 2:
-    Pay 70% tax on any remaining wage amount that exceeds 100% of the
-    historic average wage amount.    
-    """
-    marginal_tax_to_pay = Decimal(0)
-
-    bracket_one_amount = Decimal(0)
-    bracket_two_amount = Decimal(0)
-
-    if amount <= Household.average_wage:
-        bracket_one_amount = amount - (Household.average_wage * Decimal(0.5))
-    else:
-        bracket_one_amount = Household.average_wage * Decimal(0.5)
-        bracket_two_amount = amount - Household.average_wage
-
-    if amount > 0:
-        marginal_tax_to_pay = ((bracket_one_amount * Decimal(0.6))
-                                + (bracket_two_amount * Decimal(0.7)))
-
-    return marginal_tax_to_pay
-```
-
-### Taxation Strategy
-
-```python showLineNumbers title="tax-strat.py"
-def tax_strategy(self, amount):
-    """ Final tax amount paid (wage income).
-    Receives amount calculated by either,
-    flat_tax_to_pay() or marginal_tax_to_pay().
-
-    To be developed..
-    """
-    final_tax_paid = Decimal(0)
-    final_tax_paid = amount * Decimal(1) # Pay all tax owed.
-
-    return final_tax_paid
-```
-
-#### Flat & Marginal Arrangement Comparison
-
-Using an example model test run to compare the tax to be returned under either the flat rate or marginal rate arrangement. The average wage for all Households at model step 6 was: **3625.31**
-
-*Three example Households:*
-| Household Unique ID | Wage Supplied | Flat Rate (37%) Tax Return | Marginal Rate Tax Return |
-| :-------------- | :------------ | :------------------------- | :----------------------- |
-| 5               | 4023.58       | 1488.72                    | 1366.38                  |
-| 10              | 2438.05       | 902.08                     | 375.24                   |
-| 8               | 6203.24       | 2295.20                    | 2892.14                  |
-
-#### Household Agent ID 8: Marginal Rate Tax Return Breakdown
-
-50% of historical average wage amount at step 6: (**3625.31** / 2) = **1812.65**
-
-1. No tax on wage amount up to the first 50% of the historical average wage amount.
-2. Tax on wage amount that is between 50% and 100% of the historical average wage amount (**1812.65** * 60%) = **1087.59**
-3. Tax on wage amount that exceeds 100% of the historical average wage amount ((**6203.24** - **3625.31**) * 70%) = **1804.55**
-
-### Taxation by Household Type
-
-This draft describes how taxation might apply to Household agents by class *type*.
-
-#### Taxation Liability by Type
-
-Government taxation rates (in every step) by Household agent type: **alpha**, 25%; **beta**, 35%; **gamma**, 45%.
-
-#### Wealth and the Perception of Taxation
-
-Household agents think about their *wealth*. To assist thinking, Households discuss their *wealth* with other Households. Though it may only communicate with another of the same type, a Household has no preference for which other agent it will contact. Agents communicate on a random choice basis. A feature of Household *wealth* discussions: When contacted, there is a ten percent chance the Household spoken to will inform that its wealth is between 1% and 5% greater than the actuality. A five percent chance it will say it is between 1% and 5% less wealthy. Households will accurately state their *wealth*, on average, eighty-five percent of the time.
-
-##### Household wealth by type showing mutually exclusive possibilities a Household will advocate for a lower rate of taxation
-
-| Wealth in Current Step            | Alpha Household    | Beta Household    | Gamma Household   |
-| :-------------------------------- | :----------------- | :---------------- | :---------------- |
-| Is > Previous Step Wealth         | 80 to 85% of time  | 70 to 75% of time | 60 to 65% of time |
-| Is >= Other Household Wealth      | 86 to 95% of time  | 76 to 85% of time | 66 to 75% of time |
-| Is < Other Household Wealth by 5% | 96 to 100% of time | 86 to 95% of time | 76 to 85% of time |
