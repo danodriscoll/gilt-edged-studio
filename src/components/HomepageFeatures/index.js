@@ -14,11 +14,11 @@ const FeatureList = [
     ),
   },
   {
-    title: 'Monetary Policy',
+    title: 'Strategy Evolution',
     Svg: require('@site/static/img/creative_decision.svg').default,
     description: (
       <>
-        The real monetary policy logic defined.
+        Household portfolio strategies and the real monetary policy logic defined.
       </>
     ),
   },

@@ -8,17 +8,15 @@ Agent-Based Model Liquidity Preference-X is a computational interpretation of th
 
 ABMLP-X has agent class types, these being an Environment, Government, Central Bank as well as multiple Producers and Households. Producers use energy and employ Households. Households pursue wealth management strategies that include, but are not limited to, the management of a money asset portfolio and taxation payments.
 
-Model Government and Central Bank agents consume real-world UK economic time-series data that spans the beginning of the financial year 1974 to the latest available. The model may *run to the future*, beyond the latest available data. A model *future run* will require economic time-series data inspired by historical analysis of UK Government expenditures.
+## Model Context
 
-## A Model Future, Gilt Dynamics and Monetary Policy Defined
+### The United Kingdom of Great Britain and Northern Ireland (UK)
 
-In the event of a model *run to the future*, Central Bank agent logic alone will be used to set the base rate in every step: A two-stage logic that is defined by one, the expectations of Producer agents, and two, the velocity and acceleration of new money bills issued by the Government.
+Model Government and Central Bank agents consume real-world UK economic time-series data that spans the beginning of the financial year 1974 to the latest available.
 
-:::info Gilt
+## Model Future
 
-A gilt is a UK Government liability denominated in sterling, issued by the UK Treasury and listed on the London Stock Exchange. The term "gilt" or "gilt-edged security" is a reference to the primary characteristic of gilts as an investment: their security.
-
-:::
+The model may *run to the future*, beyond the latest available data. A model *future run* will require economic time-series data inspired by historical analysis of UK Government expenditures. Central Bank agent logic alone will be used to set the base rate in every step: A two-stage logic that is defined by the expectations of Producer agents, and the velocity and acceleration of new money bills issued by the Government.
 
 ## Steady State System
 
