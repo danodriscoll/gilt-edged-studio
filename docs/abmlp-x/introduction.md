@@ -12,7 +12,7 @@ ABMLP-X has agent class types, these being an Environment, Government, Central B
 
 ### The United Kingdom of Great Britain and Northern Ireland (UK)
 
-Model Government and Central Bank agents consume real-world UK economic time-series data that spans the beginning of the financial year 1974 to the latest available.
+Model Government and Central Bank agents consume real-world UK expenditure and interest rate data that spans from the beginning of financial year 1694 to the latest available.
 
 ## Model Future
 
