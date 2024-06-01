@@ -14,7 +14,7 @@ const FeatureList = [
     ),
   },
   {
-    title: 'Evolution of Strategies',
+    title: 'Strategy Evolution',
     Svg: require('@site/static/img/creative_decision.svg').default,
     description: (
       <>
