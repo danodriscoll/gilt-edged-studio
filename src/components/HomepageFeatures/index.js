@@ -18,7 +18,7 @@ const FeatureList = [
     Svg: require('@site/static/img/creative_decision.svg').default,
     description: (
       <>
-        Household strategies and monetary policy logic defined.
+        Government, Central Bank and Households: Evolving strategies defined.
       </>
     ),
   },
