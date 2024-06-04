@@ -16,7 +16,12 @@ Model Government and Central Bank agents consume real-world UK expenditure and i
 
 ## Model Future
 
-The model may *run to the future*, beyond the latest available data. A model *future run* will require economic time-series data inspired by historical analysis of UK Government expenditures. Central Bank agent logic alone will be used to set the base rate in every step: A two-stage logic that is defined by the expectations of Producer agents, and the velocity and acceleration of new money bills issued by the Government.
+The model may *run to the future*, beyond the latest available data. A *run to the future* will require one of the following two:
+
+1. The input of economic time-series data inspired by historical analysis of UK Government expenditures and base rates.
+2. 
+    * (a) First, Government logic will review the budget deficit in order to calculate the new amount of pure expenditure to be distributed to Producer agents at each step. Pertinent variables include, but are not limited to, the Government tax rate, the tax strategies of Household agents and the interest to be paid on Government money assets (see 2.b).
+    * (b) Second, Central Bank agent logic will set the base rate: A two-stage process in every future step that is defined by the expectations of Producer agents, and the velocity and acceleration of new money bills issued by the Government - a consequence of (2.a).
 
 ## Steady State System
 

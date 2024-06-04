@@ -101,7 +101,7 @@ At every step a Household will decide on the amount of (wage) taxation it will p
 
 ## Taxation Arrangements
 
-The model has three (two developed, one draft) Government taxation arrangements for the return of Household agent wage and interest income. The flat and marginal rate arrangements return the income of Households in accordance with either a single fixed, or array of percentages. The third arrangement, a draft, returns a percentage of income by Household agent class *type*.
+The model has two taxation arrangements for the return of Household agent wage and interest income. The flat and marginal rate arrangements return the income of Households in accordance with either a single fixed, or array of percentages.
 
 ### Flat Rate Taxation
 
@@ -153,23 +153,6 @@ def marginal_tax_to_pay(self, amount):
     return marginal_tax_to_pay
 ```
 
-### Taxation Strategy
-
-```python showLineNumbers title="tax-strat.py"
-def tax_strategy(self, tax_to_pay):
-    """ Tax calculated from wage supplied, current step.
-
-    Receives a 'tax_to_pay' amount calculated by either,
-    flat_tax_to_pay() or marginal_tax_to_pay().
-
-    To develop..
-    """
-    tax_payment = Decimal(0)
-    tax_payment = tax_to_pay * Decimal(1) # Pay 100% of tax owed.
-
-    return tax_payment
-```
-
 #### Flat & Marginal Arrangement Comparison
 
 Using an example model test run to compare the tax to be returned under either the flat rate or marginal rate arrangement. The average wage for all Households at model step 6 was: **3625.31**
@@ -189,25 +172,37 @@ Using an example model test run to compare the tax to be returned under either t
 2. Tax on wage amount that is between 50% and 100% of the historical average wage amount (**1812.65** * 60%) = **1087.59**
 3. Tax on wage amount that exceeds 100% of the historical average wage amount ((**6203.24** - **3625.31**) * 70%) = **1804.55**
 
-### Taxation by Household Type
+### Taxation Strategy
 
-This draft describes how taxation might apply to Household agents by class *type*.
+```python showLineNumbers title="tax-strat.py"
+def tax_strategy(self, start_tax_amount):
+    """ Tax paid in the current step.
+    
+    start_tax_amount:
+    An amount received from either,
+    flat_tax_to_pay() or marginal_tax_to_pay().
 
-#### Taxation Liability by Type
+    To develop..
+    """
+    # See Producer employment by type.
+    # 1 == Pay 100% of the 'start_tax_amount'.        
+    payment_percentage_by_type = {"alpha": 1,
+                                  "beta": 1,
+                                  "gamma": 1}
 
-Government taxation rates (in every step) by Household agent type: **alpha**, 25%; **beta**, 35%; **gamma**, 45%.
+    end_tax_amount = Decimal(0)
+    start_tax_percentage = payment_percentage_by_type[self.type]
 
-#### Wealth and the Perception of Taxation
+    end_tax_amount = start_tax_amount * Decimal(start_tax_percentage)
 
-Household agents think about their *wealth*. To assist thinking, Households discuss their *wealth* with other Households. Though it may only communicate with another of the same type, a Household has no preference for which other agent it will contact. Agents communicate on a random choice basis. A feature of Household *wealth* discussions: When contacted, there is a ten percent chance the Household spoken to will inform that its wealth is between 1% and 5% greater than the actuality. A five percent chance it will say it is between 1% and 5% less wealthy. Households will accurately state their *wealth*, on average, eighty-five percent of the time.
+    return end_tax_amount
+```
 
-##### Household wealth by type showing mutually exclusive possibilities a Household will advocate for a lower rate of taxation
+The effect of any taxation strategy that results in a payment percentage of less than 1 `payment_percentage_by_type < 1` can be similar to what Godley & Lavoie (G&L) remind us about the interest rate on page 160 of their book, Monetary Economics:
 
-| Wealth in Current Step            | Alpha Household    | Beta Household    | Gamma Household   |
-| :-------------------------------- | :----------------- | :---------------- | :---------------- |
-| Is > Previous Step Wealth         | 80 to 85% of time  | 70 to 75% of time | 60 to 65% of time |
-| Is >= Other Household Wealth      | 86 to 95% of time  | 76 to 85% of time | 66 to 75% of time |
-| Is < Other Household Wealth by 5% | 96 to 100% of time | 86 to 95% of time | 76 to 85% of time |
+A key feature of the models (see ABMSIM and ABMPC tests) presented so far is that pure government expenditures are assumed to be exogenous. Still there is no reason to believe that pure government expenditures are impervious to what is going on in the rest of the economy. G&L describe in detail the initial negative effects of higher interest rates on the Government budget deficit; effects that are eventually reversed in the early models where Government expenditures were impervious to the apparition of larger budget deficits. ..But this may not necessarily be so. Atul Sood (1999) has shown that high real interest rates lead to higher Government deficits in the short run, as must obviously be the case, but he has also shown that these higher interest rates often lead to reduced primary deficits, that is to higher primary surpluses.
+
+In other words, at some point, when the deficit gets too large, the Government will aim at controlling the public deficit, and to do so will reduce its pure government expenditures.
 
 ## The Portfolio Decision
 
@@ -361,3 +356,7 @@ def prop_bonds(self, interest_assets, government):
 
     return prop_bonds_this
 ```
+
+#### Perception of Wealth
+
+Household agents think about their *wealth*. To assist thinking, Households discuss their *wealth* with other Households. Though it may only communicate with another of the same type, a Household has no preference for which other agent it will contact. Agents communicate on a random choice basis. A feature of Household *wealth* discussions: When contacted, there is a ten percent chance the Household spoken to will inform that its wealth is between 1% and 5% greater than the actuality. A five percent chance it will say it is between 1% and 5% less wealthy. Households will accurately state their *wealth*, on average, eighty-five percent of the time.
