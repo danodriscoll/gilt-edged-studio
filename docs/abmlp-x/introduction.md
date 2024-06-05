@@ -12,14 +12,14 @@ ABMLP-X has agent class types, these being an Environment, Government, Central B
 
 ### The United Kingdom of Great Britain and Northern Ireland (UK)
 
-Model Government and Central Bank agents consume real-world UK expenditure and interest rate data that spans from the beginning of financial year 1694 to the latest available.
+Model Government and Central Bank agents consume real-world UK expenditure and interest rate data from the beginning of financial year 1694 to the latest available.
 
 ## Model Future
 
 The model may *run to the future*, beyond the latest available data. A *run to the future* will require one of the following two:
 
-1. The input of economic time-series data inspired by historical analysis of UK Government expenditures and base rates.
-2. 
+1. Either, the input of economic time-series constructed from a historical analysis of UK Government expenditures and base rates.
+2. Or,
     * (a) First, Government logic will review the budget deficit in order to calculate the new amount of pure expenditure to be distributed to Producer agents at each step. Pertinent variables include, but are not limited to, the Government tax rate, the tax strategies of Household agents and the interest to be paid on Government money assets (see 2.b).
     * (b) Second, Central Bank agent logic will set the base rate: A two-stage process in every future step that is defined by the expectations of Producer agents, and the velocity and acceleration of new money bills issued by the Government - a consequence of (2.a).
 
@@ -33,6 +33,6 @@ The Hugging Face space, [abmlp-test](https://danodrisc-abmlp-test.hf.space), sho
 
 :::note ABMLP-X Documentation
 
-Agent properties, comments and functions are updated as the model evolves.
+Documentation may or may not represent the latest incarnation of ABMLP-X development.
 
 :::

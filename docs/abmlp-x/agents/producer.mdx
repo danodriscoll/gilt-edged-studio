@@ -84,7 +84,7 @@ def employ_household_process(self):
 
 How employment might apply to Household agents by class *type*.
 
-Household agents have attributes which, among others, include *equity* and *type*. In every step, a Household agent will record its accumulated equity (wealth). Households belong to one of three *type* divisions; alpha, beta and gamma. To which division a Household belongs (at every step) will depend on its wealth that is some percentage greater or less than the `average wealth` of all Household agents in the current step.
+Household agents have attributes which, among others, include *equity* and *type*. In every step, a Household agent will record its accumulated equity (wealth). Households belong to one of three *type* divisions; alpha, beta and gamma. To which division a Household belongs (at every step) will depend on its wealth that is some percentage greater or less than the `Household.average_wealth` of all Household agents in the current step.
 
 Producer agents receive an equal share of Government expenditure at the beginning of every step. Household agents are available for employment. Each Producer will choose to employ (by random choice) an unemployed alpha Household agent seventy-five percent of the time. Failing to find an unemployed alpha, a beta Household is sought. If all beta Households are employed, gamma Households are sought by producers still looking to employ.
 

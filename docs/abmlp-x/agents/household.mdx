@@ -182,9 +182,9 @@ def tax_strategy(self, start_tax_amount):
     An amount received from either,
     flat_tax_to_pay() or marginal_tax_to_pay().
 
-    To develop..
+    To research and develop..
     """
-    # See Producer employment by type.
+    # See Producer employment by type ('alpha', 'beta', 'gamma').
     # 1 == Pay 100% of the 'start_tax_amount'.        
     payment_percentage_by_type = {"alpha": 1,
                                   "beta": 1,
@@ -198,7 +198,7 @@ def tax_strategy(self, start_tax_amount):
     return end_tax_amount
 ```
 
-The effect of any taxation strategy that results in a payment percentage of less than 1 `payment_percentage_by_type < 1` can be similar to what Godley & Lavoie (G&L) remind us about the interest rate on page 160 of their book, Monetary Economics:
+The effect of any taxation strategy that results in a payment percentage of less than 1 - `payment_percentage_by_type < 1` - can be similar to what Godley & Lavoie (G&L) remind us about the interest rate on page 160 of their book, Monetary Economics:
 
 A key feature of the models (see ABMSIM and ABMPC tests) presented so far is that pure government expenditures are assumed to be exogenous. Still there is no reason to believe that pure government expenditures are impervious to what is going on in the rest of the economy. G&L describe in detail the initial negative effects of higher interest rates on the Government budget deficit; effects that are eventually reversed in the early models where Government expenditures were impervious to the apparition of larger budget deficits. ..But this may not necessarily be so. Atul Sood (1999) has shown that high real interest rates lead to higher Government deficits in the short run, as must obviously be the case, but he has also shown that these higher interest rates often lead to reduced primary deficits, that is to higher primary surpluses.
 
