@@ -184,16 +184,34 @@ def tax_strategy(self, start_tax_amount):
 
     To research and develop..
     """
-    # See Producer employment by type ('alpha', 'beta', 'gamma').
-    # 1 == Pay 100% of the 'start_tax_amount'.        
-    payment_percentage_by_type = {"alpha": 1,
-                                  "beta": 1,
-                                  "gamma": 1}
+    def alpha_strat():
+        # 1 == Pay 100% of the 'start_tax_amount'.
+        payment_percentage = Decimal(1)
+
+        return payment_percentage
+
+    def beta_strat():
+        # 1 == Pay 100% of the 'start_tax_amount'.
+        payment_percentage = Decimal(1)
+
+        return payment_percentage
+
+    def gamma_strat():
+        # 1 == Pay 100% of the 'start_tax_amount'.
+        payment_percentage = Decimal(1)
+
+        return payment_percentage
+
+    # See Producer employment by type.
+    strategy_by_household_type = {"alpha": alpha_strat,
+                                  "beta": beta_strat,
+                                  "gamma": gamma_strat}
 
     end_tax_amount = Decimal(0)
-    start_tax_percentage = payment_percentage_by_type[self.type]
 
-    end_tax_amount = start_tax_amount * Decimal(start_tax_percentage)
+    strat_tax_percentage = strategy_by_household_type.get(self.type, lambda: 'Invalid')()
+
+    end_tax_amount = start_tax_amount * Decimal(strat_tax_percentage)
 
     return end_tax_amount
 ```
