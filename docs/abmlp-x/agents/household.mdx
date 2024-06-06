@@ -22,6 +22,7 @@ At every step a Household will decide on the amount of (wage) taxation it will p
                 super().__init__(unique_id, model)
                 
                 self.breed = "Household"
+                self.type = "gamma" # The default Household agent 'type'.
                 self.period = 0 # Model run step.
 
                 # (W_Ns) Wage supplied.
@@ -216,7 +217,7 @@ def tax_strategy(self, start_tax_amount):
     return end_tax_amount
 ```
 
-The effect of any taxation strategy that results in a payment percentage of less than 1 - `payment_percentage_by_type < 1` - can be similar to what Godley & Lavoie (G&L) remind us about the interest rate on page 160 of their book, Monetary Economics:
+The effect of any taxation strategy that results in a payment percentage of less than 1 - `payment_percentage < 1` - can be similar to what Godley & Lavoie (G&L) remind us about the interest rate on page 160 of their book, Monetary Economics:
 
 A key feature of the models (see ABMSIM and ABMPC tests) presented so far is that pure government expenditures are assumed to be exogenous. Still there is no reason to believe that pure government expenditures are impervious to what is going on in the rest of the economy. G&L describe in detail the initial negative effects of higher interest rates on the Government budget deficit; effects that are eventually reversed in the early models where Government expenditures were impervious to the apparition of larger budget deficits. ..But this may not necessarily be so. Atul Sood (1999) has shown that high real interest rates lead to higher Government deficits in the short run, as must obviously be the case, but he has also shown that these higher interest rates often lead to reduced primary deficits, that is to higher primary surpluses.
 
@@ -347,29 +348,29 @@ def prop_bonds(self, interest_assets, government):
 
     if self.is_employed:
         if wealth_diff_ratio >= 1:
-            prop_bonds_this = ((prop_assets * Decimal('0.40'))
+            prop_bonds_this = ((prop_assets * Decimal('0.90'))
                                 * (1 + zero_division(change_in_bond_yield, 100)))
         elif wealth_diff_ratio >= 0.5 and wealth_diff_ratio < 1:
-            prop_bonds_this = ((prop_assets * Decimal('0.30'))
+            prop_bonds_this = ((prop_assets * Decimal('0.70'))
                                 * (1 + zero_division(change_in_bond_yield, 100)))
         elif wealth_diff_ratio >= 0 and wealth_diff_ratio < 0.5:
-            prop_bonds_this = ((prop_assets * Decimal('0.20'))
+            prop_bonds_this = ((prop_assets * Decimal('0.30'))
                                 * (1 + zero_division(change_in_bond_yield, 100)))
         else:
-            prop_bonds_this = ((prop_assets * Decimal('0.10'))
+            prop_bonds_this = ((prop_assets * Decimal('0.20'))
                                 * (1 + zero_division(change_in_bond_yield, 100)))
     else: # Agent is unemployed in this step.
         if wealth_diff_ratio >= 1:
-            prop_bonds_this = ((prop_assets * Decimal('0.30'))
+            prop_bonds_this = ((prop_assets * Decimal('0.70'))
                                 * (1 + zero_division(change_in_bond_yield, 100)))
         elif wealth_diff_ratio >= 0.5 and wealth_diff_ratio < 1:
-            prop_bonds_this = ((prop_assets * Decimal('0.20'))
+            prop_bonds_this = ((prop_assets * Decimal('0.50'))
                                 * (1 + zero_division(change_in_bond_yield, 100)))
         elif wealth_diff_ratio >= 0 and wealth_diff_ratio < 0.5:
-            prop_bonds_this = ((prop_assets * Decimal('0.10'))
+            prop_bonds_this = ((prop_assets * Decimal('0.20'))
                                 * (1 + zero_division(change_in_bond_yield, 100)))
         else:
-            prop_bonds_this = ((prop_assets * Decimal('0.05'))
+            prop_bonds_this = ((prop_assets * Decimal('0.10'))
                                 * (1 + zero_division(change_in_bond_yield, 100)))
 
     return prop_bonds_this

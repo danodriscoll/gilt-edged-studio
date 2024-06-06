@@ -80,7 +80,7 @@ const config = {
             label: 'Model',
           },
           {to: '/blog', label: 'Blog', position: 'left'},
-          // {to: '/data-apps', label: 'Data Apps', position: 'right'},
+          {to: '/gilt-manoeuvers', label: 'Gilt Manoeuvers', position: 'right'},
           {
             href: 'https://www.danielodriscoll.me.uk/',
             label: 'Personal Site',
