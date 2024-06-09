@@ -10,9 +10,9 @@ In 1694, the recently formed Bank of England gathered together 1,268 individuals
 
 :::
 
-## Time-Series Relationships & Evolving SQL Statements
+## Economic Time-Series & Random Relationships
 
-Gilt manoeuvers analyses the macro and micro output of [ABMLP-X](docs/abmlp-x/introduction) in correlation with an extremely bounded view of over three-hundred years of real-world UK events. The goal is to build a number of *SQL statements* that may help me to better communicate the dynamics of English Government Gilts across varying timeframes, past, present and future.
+Gilt manoeuvers analyses the macro and micro output of an evolving [ABMLP-X](docs/abmlp-x/introduction) in relation to an extremely bounded view of over three-hundred years of real-world UK events. The study of relationships and event correlations will, I hope, help me to better understand and anticipate the dynamics of English Government Gilts, present and future.
 
 ### Architecture
 
