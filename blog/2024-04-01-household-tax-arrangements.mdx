@@ -1,0 +1,134 @@
+---
+slug: household-tax-arrangements
+title: Household Tax Arrangements
+hide_table_of_contents: false
+authors: [danodriscoll]
+tags: [abmlp-x, household]
+---
+
+ABMLP-X household taxation arrangements: April 2024.
+
+<!--truncate-->
+
+## Taxation Arrangements
+
+The model has two taxation arrangements for the return of Household agent wage and interest income. The flat and marginal rate arrangements return the income of Households in accordance with either a single fixed, or array of percentages.
+
+### Flat Rate Taxation
+
+```python showLineNumbers title="flat-rate-tax.py"
+# Utility: Catch divide by zero error.
+def zero_division(n, d):
+    return n / d if d else 0
+
+def flat_tax_to_pay(self, amount, rate):
+    """ Flat rate tax to pay (wage and interest income). """
+    tax_to_pay = Decimal(0)
+    tax_to_pay = amount * zero_division(rate, 100)
+
+    return tax_to_pay
+```
+
+### Marginal Rate Taxation
+
+```python showLineNumbers title="marginal-rate-tax.py"
+def marginal_tax_to_pay(self, amount):
+    """ Marginal rate tax to pay (wage only).
+
+    Tax Bracket 0:
+    No tax on any wage upto the first 50% of the historic average wage amount.
+
+    Tax Bracket 1:
+    Pay 60% tax on any remaining wage amount that is between 50% and 100%
+    of the historic average wage amount.
+
+    Tax Bracket 2:
+    Pay 70% tax on any remaining wage amount that exceeds 100% of the
+    historic average wage amount.    
+    """
+    marginal_tax_to_pay = Decimal(0)
+
+    bracket_one_amount = Decimal(0)
+    bracket_two_amount = Decimal(0)
+
+    if amount <= Household.average_wage:
+        bracket_one_amount = amount - (Household.average_wage * Decimal(0.5))
+    else:
+        bracket_one_amount = Household.average_wage * Decimal(0.5)
+        bracket_two_amount = amount - Household.average_wage
+
+    if amount > 0:
+        marginal_tax_to_pay = ((bracket_one_amount * Decimal(0.6))
+                                + (bracket_two_amount * Decimal(0.7)))
+
+    return marginal_tax_to_pay
+```
+
+#### Flat & Marginal Arrangement Comparison
+
+Using an example model test run to compare the tax to be returned under either the flat rate or marginal rate arrangement. The average wage for all Households at model step 6 was: **3625.31**
+
+*Three example Households:*
+| Household Unique ID | Wage Supplied | Flat Rate (37%) Tax Return | Marginal Rate Tax Return |
+| :-------------- | :------------ | :------------------------- | :----------------------- |
+| 5               | 4023.58       | 1488.72                    | 1366.38                  |
+| 10              | 2438.05       | 902.08                     | 375.24                   |
+| 8               | 6203.24       | 2295.20                    | 2892.14                  |
+
+#### Household Agent ID 8: Marginal Rate Tax Return Breakdown
+
+50% of historical average wage amount at step 6: (**3625.31** / 2) = **1812.65**
+
+1. No tax on wage amount up to the first 50% of the historical average wage amount.
+2. Tax on wage amount that is between 50% and 100% of the historical average wage amount (**1812.65** * 60%) = **1087.59**
+3. Tax on wage amount that exceeds 100% of the historical average wage amount ((**6203.24** - **3625.31**) * 70%) = **1804.55**
+
+### Taxation Strategy
+
+```python showLineNumbers title="tax-strat.py"
+def tax_strategy(self, start_tax_amount):
+    """ Tax paid in the current step.
+    
+    start_tax_amount:
+    An amount received from either,
+    flat_tax_to_pay() or marginal_tax_to_pay().
+
+    To research and develop..
+    """
+    def alpha_strat():
+        # 1 == Pay 100% of the 'start_tax_amount'.
+        payment_percentage = Decimal(1)
+
+        return payment_percentage
+
+    def beta_strat():
+        # 1 == Pay 100% of the 'start_tax_amount'.
+        payment_percentage = Decimal(1)
+
+        return payment_percentage
+
+    def gamma_strat():
+        # 1 == Pay 100% of the 'start_tax_amount'.
+        payment_percentage = Decimal(1)
+
+        return payment_percentage
+
+    # See Producer employment by type.
+    strategy_by_household_type = {"alpha": alpha_strat,
+                                  "beta": beta_strat,
+                                  "gamma": gamma_strat}
+
+    end_tax_amount = Decimal(0)
+
+    strat_tax_percentage = strategy_by_household_type.get(self.type, lambda: 'Invalid')()
+
+    end_tax_amount = start_tax_amount * Decimal(strat_tax_percentage)
+
+    return end_tax_amount
+```
+
+The effect of any taxation strategy that results in a payment percentage of less than 1 - `payment_percentage < 1` - can be similar to what Godley & Lavoie (G&L) remind us about the interest rate on page 160 of their book, Monetary Economics:
+
+A key feature of the models (see ABMSIM and ABMPC tests) presented so far is that pure government expenditures are assumed to be exogenous. Still there is no reason to believe that pure government expenditures are impervious to what is going on in the rest of the economy. G&L describe in detail the initial negative effects of higher interest rates on the Government budget deficit; effects that are eventually reversed in the early models where Government expenditures were impervious to the apparition of larger budget deficits. ..But this may not necessarily be so. Atul Sood (1999) has shown that high real interest rates lead to higher Government deficits in the short run, as must obviously be the case, but he has also shown that these higher interest rates often lead to reduced primary deficits, that is to higher primary surpluses.
+
+In other words, at some point, when the deficit gets too large, the Government will aim at controlling the public deficit, and to do so will reduce its pure government expenditures.

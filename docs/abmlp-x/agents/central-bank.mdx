@@ -6,7 +6,7 @@ sidebar_position: 5
 
 ## Properties
 
-```python showLineNumbers title="agents.py"
+```python showLineNumbers title="central-bank.py"
 class CentralBank(mesa.Agent):
     """A Central Bank agent."""
 
@@ -39,7 +39,7 @@ class CentralBank(mesa.Agent):
 
 ## Behaviour Comments and Functions
 
-```python showLineNumbers title="agents.py"
+```python showLineNumbers title="central-bank.py"
 def step(self):
     """
     1 Set the rate of interest on bills.
@@ -52,14 +52,6 @@ def step(self):
     # 1
     # Historic rates.
     self.base_rate = Decimal(float(self.rate_data['value'].iloc[self.period]))
-
-    """
-    Beyond historic rates:
-    Get Producer expectations and 'velocity' and 'acceleration' of new money bills issued.
-    """
-    # self.base_rate = policy_interest_rate(r.lrange("bills:velocity", 0, -1),
-    #                                       r.lrange("bills:acceleration", 0, -1),
-    #                                       producer.average_income_expectation)
 
     # 2
     # Connect with the government.

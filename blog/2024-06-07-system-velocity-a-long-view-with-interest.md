@@ -2,7 +2,7 @@
 slug: system-velocity-a-long-view-with-interest
 title: System Velocity - A Long View with Interest
 authors: [danodriscoll]
-tags: [analysis, model]
+tags: [analysis, abmlp-x]
 ---
 
 Advancing the earlier post, [system velocity - a long view](/blog/2024-05-23-system-velocity-a-long-view.mdx), the model is now run from the first financial quarter of 1974 and will include interest payments on Government money assets.
@@ -22,7 +22,7 @@ See GiltEdged [model runs](https://docs.google.com/spreadsheets/d/e/2PACX-1vRjjK
 - Bond Coupon Rate: 1%
 - Interest (Base) Rate: See *Model Input: Real-World Interest Rates* from the [resource](/docs/resource/time-series) page.
 
-### Model Analysis & Charts
+### Model Analysis Charts
 
 1. The [velocity](https://www.data-reports.net/gilt-edged-studio/libra-498-07-06-2024-analysis-velocity.html) of Government bills issued.
 2. The [acceleration](https://www.data-reports.net/gilt-edged-studio/libra-498-07-06-2024-analysis-acceleration.html) of Government bills issued.

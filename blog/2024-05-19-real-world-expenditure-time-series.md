@@ -2,7 +2,7 @@
 slug: real-world-expenditure-time-series
 title: Clarity on Expenditure Time Series
 authors: [danodriscoll]
-tags: [parameters, model]
+tags: [parameters, abmlp-x]
 ---
 
 Fragments of an email exchange between myself (Dan) and a helpful member of the [ONS](https://www.ons.gov.uk/) GDP team about which UK Government expenditure time-series would be most appropriate to use in my model.

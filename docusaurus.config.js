@@ -43,7 +43,9 @@ const config = {
           sidebarPath: './sidebars.js',
         },
         blog: {
-          showReadingTime: true,
+          showReadingTime: false,
+          blogSidebarCount: 0,
+          postsPerPage: 5
         },
         theme: {
           customCss: './src/css/custom.css',

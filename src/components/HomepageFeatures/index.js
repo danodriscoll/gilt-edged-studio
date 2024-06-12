@@ -5,29 +5,29 @@ import styles from './styles.module.css';
 
 const FeatureList = [
   {
-    title: 'Model Development',
+    title: 'Model Agent Properties',
     Svg: require('@site/static/img/model_development.svg').default,
     description: (
       <>
-        An open-ended agent-based monetary model development. Read the <Link to="/docs/introduction">introduction</Link>.
+        An <Link to="/docs/introduction">introduction</Link> to early models, tests and ABMLP-X agents.
       </>
     ),
   },
   {
-    title: 'Strategy Evolution',
-    Svg: require('@site/static/img/creative_decision.svg').default,
+    title: 'Bank Agent Logic',
+    Svg: require('@site/static/img/cb-agent.svg').default,
     description: (
       <>
-        Government, Central Bank and Households: Evolving strategies defined.
+        Central Bank responses to Government and Household behaviours: A strategy revealed.
       </>
     ),
   },
   {
-    title: 'Data Analysis',
+    title: 'Development and Analysis',
     Svg: require('@site/static/img/model_analysis.svg').default,
     description: (
       <>
-        Journey to the future. Agent behaviours and macro output time-series analysis. Peruse the <Link to="/blog">blog</Link>.
+        The open-ended development of ABMLP-X and time-series analysis. Peruse the <Link to="/blog">blog</Link>.
       </>
     ),
   },

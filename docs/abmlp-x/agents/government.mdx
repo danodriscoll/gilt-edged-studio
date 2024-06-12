@@ -10,7 +10,7 @@ sidebar_position: 2
   <summary>Government(Agent Properties)</summary>
   <div>
     <div>
-        ```python showLineNumbers title="agents.py"
+        ```python showLineNumbers title="government.py"
         class Government(mesa.Agent):
             """A Government agent."""
 
@@ -95,7 +95,7 @@ sidebar_position: 2
   <summary>Government(Agent Comments)</summary>
   <div>
     <div>
-        ```python showLineNumbers title="agents.py"
+        ```python showLineNumbers title="government.py"
         def step(self):
           """ Government Functions (each and every step):
           1 Update the amount of new (pure) expenditure.
@@ -154,50 +154,4 @@ sidebar_position: 2
 
 ## Behaviour Functions
 
-### Calculate Bond Price
-
-```python showLineNumbers title="agents.py"
-# Utility: Catch divide by zero error.
-def zero_division(n, d):
-    return n / d if d else Decimal(0)
-
-# 5
-""" G&L pp131-132: The value of a perpetuity (long-term bond) in this step. """
-# Use the interest rate from the previous step to calculate the price of a
-# long-term bond in this step.
-self.bond_price = zero_division(self.coupon_rate, central_bank.base_rate)
-
-# Use the bond price in this step to calculate the long-term rate of interest
-# (bond yield (to maturity)).
-self.bond_yield = zero_division(self.coupon_rate, self.bond_price)
-```
-
-### Issue New or Redeem Bills
-
-```python showLineNumbers title="agents.py"
-# 6
-expenditures = (abs(self.services_demanded)
-                + abs(self.interest_on_households_bills)
-                + abs(self.interest_on_central_bank_bills)
-                + abs(self.interest_on_bonds))
-
-# Taxes and central bank profits.
-revenues = self.taxation_revenue + self.central_bank_profits
-
-# This would be: ((self.bonds_issued
-#                  - self.bonds_issued_last_step)
-#                  * self.bond_price)
-_value_of_new_bonds_issued = Decimal(0) # See Comments: 'A Story'.
-
-self.debt = ((expenditures
-              - revenues)
-              - _value_of_new_bonds_issued)
-
-_closing_debt = self.debt
-_change_in_debt = _closing_debt - _opening_debt
-
-# Change in debt (ΔBs) aka, the 'fiscal balance',
-# is a positive amount if running a deficit, negative if surplus.
-self.bills_issued -= _change_in_debt
-self.fiscal_balance = _change_in_debt
-```
+Government agent [behavioural function](/blog/tags/government) blog posts.

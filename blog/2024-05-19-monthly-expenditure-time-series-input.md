@@ -2,7 +2,7 @@
 slug: monthly-expenditure-time-series-input
 title: Monthly Expenditure Time-Series Input
 authors: [danodriscoll]
-tags: [parameters, model]
+tags: [parameters, abmlp-x]
 ---
 
 ## From Quarterly to Monthly Time-Series Data

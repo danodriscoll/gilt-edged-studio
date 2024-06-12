@@ -10,10 +10,10 @@ In 1694, the recently formed Bank of England gathered together 1,268 individuals
 
 :::
 
-## Economic Time-Series & Random Relationships
+## Time-Series Correlation & Speculated Futures
 
-Gilt manoeuvers analyses the macro and micro output of an evolving [ABMLP-X](docs/abmlp-x/introduction) in relation to an extremely bounded view of over three-hundred years of real-world UK events. The study of relationships and event correlations will, I hope, help me to better understand and anticipate the dynamics of English Government Gilts, present and future.
+Manoeuvers is the analysis of the macro and micro; the output of a simple, evolving, monetary system [model](docs/abmlp-x/introduction). Analysis will, I hope, help me to better understand and anticipate both agent logics and the real-world Government Gilt dynamics that result.
 
 ### Architecture
 
-Simple data analysis of model output is performed in local [Jupyter](https://code.visualstudio.com/docs/datascience/jupyter-notebooks) notebooks. Dashboards and snapshots may change, break or disappear at any time. View a summary technical [architecture](https://www.data-reports.net/studio-sketch/architecture.html).
+Data analyses are performed in local [Jupyter](https://code.visualstudio.com/docs/datascience/jupyter-notebooks) notebooks. Charts, dashboards and snapshots may change, break or disappear at any time. View a summary technical [architecture](https://www.data-reports.net/studio-sketch/architecture.html).
