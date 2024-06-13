@@ -18,7 +18,7 @@ const FeatureList = [
     Svg: require('@site/static/img/cb-agent.svg').default,
     description: (
       <>
-        Central Bank responses to Government and Household behaviours: A strategy revealed.
+        Central Bank responses to Government and Household behaviours: A strategy explored.
       </>
     ),
   },
